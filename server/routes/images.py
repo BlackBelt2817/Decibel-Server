@@ -16,6 +16,43 @@ songArtImageThumbnailsPath = imagesPath + '/Song Art Image Thumbnails'
 
 routes_images = Blueprint('routes_images', __name__)
 
+@routes_images.route('/images/files/get/headerImage/<songId>', methods=['GET'])
+def getHeaderImage(songId):
+    try:
+        return send_file(os.path.join(headerImagesPath, songId + '.jpg'))
+    except Exception as e:
+        return jsonify({'data': None, 'success': False, 'error': e})
+    
+@routes_images.route('/images/files/get/headerImageThumbnail/<songId>', methods=['GET'])
+def getHeaderImageThumbnail(songId):
+    try:
+        return send_file(os.path.join(headerImageThumbnailsPath, songId + '.jpg'))
+    except Exception as e:
+        return jsonify({'data': None, 'success': False, 'error': e})
+
+@routes_images.route('/images/files/get/songArtImage/<songId>', methods=['GET'])
+def getSongArtImage(songId):
+    try:
+        return send_file(os.path.join(songArtImagesPath, songId + '.jpg'))
+    except Exception as e:
+        return jsonify({'data': None, 'success': False, 'error': e})
+    
+@routes_images.route('/images/files/get/songArtImageThumbnail/<songId>', methods=['GET'])
+def getSongArtImageThumbnail(songId):
+    try:
+        return send_file(os.path.join(songArtImageThumbnailsPath, songId + '.jpg'))
+    except Exception as e:
+        return jsonify({'data': None, 'success': False, 'error': e})
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
 @routes_images.route('/images/files/getMissing/post', methods=['POST'])
 def getMissingImageIds():
     try:
@@ -86,5 +123,7 @@ def uploadImageFile():
         return jsonify({'data': None, 'success': True})
     except Exception as e:
         return jsonify({'data': None, 'success': False, 'error': e})
+
+
     
 

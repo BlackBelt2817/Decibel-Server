@@ -1,0 +1,92 @@
+#    request_data = request.data
+#    print(request_data)
+#    request_args = request.args
+#    print(request_args)
+#    request_form = request.form
+#    print(request_form)
+#    request_files = request.files
+#    print(request_files)
+#    request_values = request.values
+#    print(request_values)
+#    request_json = request.json
+#    print(request_json)
+#    request_get_json = request.get_json()
+#    print(request_get_json)
+#    request_get_json_forced = request.get_json(force=True)
+#    print(request_get_json_forced)
+
+#camera = picamera.PiCamera(resolution='1920x1080', framerate=30)
+#camera = picamera.PiCamera(resolution='1280x720', framerate=60)
+#camera = picamera.PiCamera(resolution='640x480', framerate=90)
+#camera = picamera.PiCamera(resolution='640x480', framerate=60)
+#camera = picamera.PiCamera()
+
+#my_file = open('my_image.jpg', 'wb')
+#camera = PiCamera()
+##camera.start_preview()
+#sleep(2)
+#camera.capture(my_file)
+## At this point my_file.flush() has been called, but the file has
+## not yet been closed
+#my_file.close()
+##camera.stop_preview()
+
+#cameraSocket = None
+
+#@routes_camera_spare.route('/cameraSpare/uploadRecordingImage', methods=['POST'])
+#def uploadRecordingImage():
+#    try:
+#        requestForm = request.form
+#        
+#        recordingFilename = requestForm['recording_filename']
+#        recordingExtension = requestForm['recording_extension']
+#        recordingFile = request.files['recording_file']
+#        filenamePath = recordingFilename.split('_')
+#        filenamePath.pop()
+#        filenamePath = '_'.join(filenamePath)
+#        
+#        file_dir = os.path.join(recordingsPath, filenamePath)
+#        file_path = os.path.join(file_dir, recordingFilename + '.' + recordingExtension)
+#        if os.path.exists(file_dir) != True:
+#            os.makedirs(file_dir)
+#        recordingFile.save(file_path)
+#        
+#        return jsonify({'data': None, 'success': True})
+#    except Exception as e:
+#        return jsonify({'data': None, 'success': False, 'error': e})
+
+#    app.run(debug=True, threaded=True)
+    
+    socketio.run(app)
+#    socketio.run(app, debug=True, allow_unsafe_werkzeug=True)
+#    socketio.run(app, host='0.0.0.0')
+
+#@socketio.on('getVideoFile')
+#def getVideoFile():
+#    with open(curPath + '/home/pi/Desktop/Decibel-Server/server/recordings/2023_01_31_12_07_58.mjpeg', 'rb') as f:
+#        contents = f.read()
+#        emit('receiveVideoFile', jsonify({'data' :f}), broadcast=True)
+##    emit('receiveVideoFile', send_file(os.path.join(recordingsPath, '2023_01_31_12_07_58.mjpeg')), broadcast=True)
+##    emit('receiveVideoFile', os.listdir(curPath + '/home/pi/Desktop/Decibel-Server/server/recordings/2023_01_31_12_07_58.mjpeg'), broadcast=True)
+    @socketio.on('send_recording_jpeg')
+    def sendRecordingJpeg():
+        emit('recording_jpeg_received', curPath + '/../recordings', broadcast=True)
+        
+    @socketio.on('get_file_name')
+    def getFileName(data):
+        recordingFilename = data['recordingFilename']
+        recordingExtension = data['recordingExtension']
+        filenamePath = recordingFilename.split('_')
+        filenamePath.pop()
+        filenamePath = '_'.join(filenamePath)
+        
+        fp = os.path.join(recordingsPath, filenamePath, recordingFilename + '.' + recordingExtension)
+        
+        socket_data = {
+            'recordingFilename': recordingFilename,
+            'recordingExtension': recordingExtension,
+            'filenamePath': filenamePath,
+            'fp': fp
+        }
+        
+        emit('send_file_name', socket_data, broadcast=True)

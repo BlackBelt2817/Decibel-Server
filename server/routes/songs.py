@@ -46,6 +46,36 @@ def getMissingSongIds():
     except Exception as e:
         return jsonify({'data': None, 'success': False, 'error': e})
     
+@routes_songs.route('/songs/sql/get/all', methods=['GET'])
+def getAllSongs():
+    try:
+        sqliteConnection = sqlite3.connect('database.db')
+        cursor = sqliteConnection.cursor()
+        cursor.execute("SELECT * FROM songs")
+        songs = cursor.fetchall()
+        finalSongs = []
+        for row in songs:
+            currentSong = {
+                '_ID': row[0],
+                'song_id': row[1],
+                'artist': row[2],
+                'title': row[3],
+                'album': row[4],
+                'lyrics': row[5],
+                'extension': row[6],
+                'track': row[7],
+                'file_downloaded': row[8],
+                'record_verified': row[9],
+                'lyrics_link': row[10]
+            }
+            finalSongs.append(currentSong)
+        sqliteConnection.commit()
+        sqliteConnection.close()
+        
+        return jsonify({'data': finalSongs, 'success': True})
+    except Exception as e:
+        return jsonify({'data': None, 'success': False, 'error': e})
+    
 @routes_songs.route('/songs/file/get/<fileName>', methods=['GET'])
 def getSongFile(fileName):
     try:
@@ -97,7 +127,8 @@ def getSongsSqlSortedByArtist():
     try:
         sqliteConnection = sqlite3.connect('database.db')
         cursor = sqliteConnection.cursor()
-        cursor.execute("SELECT * FROM songs ORDER BY artist COLLATE NOCASE ASC, album COLLATE NOCASE ASC, CAST(track as INTEGER) ASC")
+        #cursor.execute("SELECT * FROM songs ORDER BY artist COLLATE NOCASE ASC, album COLLATE NOCASE ASC, CAST(track as INTEGER) ASC")
+        cursor.execute("SELECT * FROM songs ORDER BY artist COLLATE NOCASE ASC, title COLLATE NOCASE ASC")
         songs = cursor.fetchall()
         finalSongs = []
         for row in songs:
