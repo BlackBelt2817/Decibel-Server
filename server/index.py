@@ -16,12 +16,13 @@ from routes.chats import routes_chats, socket_init_chats
 from routes.games import routes_games, socket_init_games
 from routes.images import routes_images
 from routes.languages import routes_languages
+#from routes.misc import routes_misc
 #from routes.playlists import routes_playlists
 from routes.posts import routes_posts, socket_init_posts
 #from routes.settings import routes_settings
 from routes.songs import routes_songs
 from routes.users import routes_users, socket_init_users
-from routes.yt import routes_yt
+from routes.yt import routes_yt, socket_init_yt
 
 
 curPath = os.path.dirname(__file__)
@@ -44,6 +45,7 @@ app.register_blueprint(routes_chats)
 app.register_blueprint(routes_games)
 app.register_blueprint(routes_images)
 app.register_blueprint(routes_languages)
+#app.register_blueprint(routes_misc)
 #app.register_blueprint(routes_playlists)
 app.register_blueprint(routes_posts)
 #app.register_blueprint(routes_settings)
@@ -56,6 +58,7 @@ socket_init_chats(socketio)
 socket_init_games(socketio)
 socket_init_posts(socketio)
 socket_init_users(socketio)
+socket_init_yt(socketio)
 
 spare_camera_recording = False
 
